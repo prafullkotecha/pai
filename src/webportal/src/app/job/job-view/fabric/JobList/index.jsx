@@ -144,7 +144,7 @@ export default function JobList() {
       })
       .then(setAllJobs)
       .catch(err => {
-        throw Error(err.data.message);
+        throw Error(err.data.message || err.message);
       });
   }, []);
 
