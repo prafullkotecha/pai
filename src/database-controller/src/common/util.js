@@ -86,4 +86,5 @@ function timeoutDecorator(promiseFn, loggingMessage, timeoutMs) {
 module.exports = {
   alwaysRetryDecorator: alwaysRetryDecorator,
   timeoutDecorator: timeoutDecorator,
+  timePeriod: timePeriod,
 };
