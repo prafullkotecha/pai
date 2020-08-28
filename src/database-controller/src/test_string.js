@@ -14,6 +14,7 @@ async function main() {
     const frameworks = [];
     const n = parseInt(process.argv[2]);
     console.log(n)
+    console.log(frameworkString.length)
     for (let i = 0; i<n; i++) {
       frameworks.push(frameworkString + i);
     }
