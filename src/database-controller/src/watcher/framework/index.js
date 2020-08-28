@@ -12,12 +12,12 @@ const config = require('@dbc/watcher/framework/config');
 
 const lock = new AsyncLock({ maxPending: Number.MAX_SAFE_INTEGER });
 
-async function synchronizeFramework(eventType, apiObject) {
+async function synchronizeFramework(eventType, apiObjectStr) {
   const res = await fetch(
     `${config.writeMergerUrl}/api/v1/watchEvents/${eventType}`,
     {
       method: 'POST',
-      body: JSON.stringify(apiObject),
+      body: apiObjectStr,
       headers: { 'Content-Type': 'application/json' },
       timeout: config.writeMergerConnectionTimeoutSecond * 1000,
     },
@@ -54,7 +54,7 @@ const eventHandler = (eventType, apiObject) => {
   lock.acquire(
     apiObject.metadata.name,
     alwaysRetryDecorator(
-      () => synchronizeFramework(eventType, apiObject),
+      () => synchronizeFramework(eventType, JSON.stringify(apiObject)),
       `Sync to write merger type=${eventType} receivedTs=${receivedTs} framework=${apiObject.metadata.name} state=${state}`,
     ),
   );
