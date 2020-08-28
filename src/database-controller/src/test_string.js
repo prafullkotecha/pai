@@ -7,6 +7,19 @@ const k8s = require('@dbc/common/k8s');
 const { timePeriod } = require('@dbc/common/util');
 const _ = require('lodash');
 
+function setMemoryReport() {
+  function report() {
+    const used = process.memoryUsage();
+    const rss = Math.round(used.rss / 1024 / 1024 * 100) / 100
+    const heapTotal = Math.round(used.rss / 1024 / 1024 * 100) / 100
+    const heapUsed = Math.round(used.rss / 1024 / 1024 * 100) / 100
+    logger.warn(`[Memory Report]: ALL: ${rss} MB; ALL HEAP: ${heapTotal} MB; USED HEAP ${heapUsed} MB`)
+  }
+  setInterval(report, 2000);
+}
+setMemoryReport()
+
+
 async function main() {
   try{
     const framework = await k8s.getFramework('7226a3e805c643688b605dc470c24083');
