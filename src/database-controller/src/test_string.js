@@ -15,7 +15,7 @@ async function main() {
     const n = parseInt(process.argv[2]);
     console.log(n)
     for (let i = 0; i<n; i++) {
-      frameworks.push(_.cloneDeep(frameworkString));
+      frameworks.push(frameworkString + i);
     }
     console.log('start waiting...')
     await timePeriod(1000000000);
