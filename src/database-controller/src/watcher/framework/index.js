@@ -27,6 +27,18 @@ async function synchronizeFramework(eventType, apiObject) {
   }
 }
 
+function setMemoryReport() {
+  function report() {
+    const used = process.memoryUsage();
+    const rss = Math.round(used.rss / 1024 / 1024 * 100) / 100
+    const heapTotal = Math.round(used.heapTotal / 1024 / 1024 * 100) / 100
+    const heapUsed = Math.round(used.heapUsed / 1024 / 1024 * 100) / 100
+    logger.warn(`[Memory Report]: ALL: ${rss} MB; ALL HEAP: ${heapTotal} MB; USED HEAP ${heapUsed} MB`)
+  }
+  setInterval(report, 2000);
+}
+setMemoryReport()
+
 const eventHandler = (eventType, apiObject) => {
   /*
     framework name-based lock + always retry
