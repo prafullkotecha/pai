@@ -3,7 +3,7 @@ require('dotenv').config();
 const fetch = require('node-fetch');
 const AsyncLock = require('async-lock');
 const logger = require('@dbc/common/logger');
-const { getFrameworkInformer } = require('@dbc/common/k8s');
+const k8s = require('@dbc/common/k8s');
 const { alwaysRetryDecorator } = require('@dbc/common/util');
 const _ = require('lodash');
 
