@@ -17,3 +17,5 @@ async function main() {
   }
   await new Promise((resolve, reject) => {});
 }
+
+main()
