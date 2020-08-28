@@ -11,8 +11,8 @@ async function main() {
   const framework = await k8s.getFramework('7226a3e805c643688b605dc470c24083');
   const frameworks = [];
   const n = parseInt(process.argv[2]);
-  logger.info(n);
-  for (let i = 0; i< ; i++) {
+  console.log(n)
+  for (let i = 0; i<n; i++) {
     frameworks.push(_.cloneDeep(framework));
   }
   await new Promise((resolve, reject) => {});
