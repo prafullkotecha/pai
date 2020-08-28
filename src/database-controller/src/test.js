@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const AsyncLock = require('async-lock');
 const logger = require('@dbc/common/logger');
 const k8s = require('@dbc/common/k8s');
-const { alwaysRetryDecorator } = require('@dbc/common/util');
+const { timePeriod } = require('@dbc/common/util');
 const _ = require('lodash');
 
 async function main() {
@@ -16,7 +16,8 @@ async function main() {
     for (let i = 0; i<n; i++) {
       frameworks.push(_.cloneDeep(framework));
     }
-    await new Promise((resolve, reject) => {});
+    console.log('start waiting...')
+    await timePeriod(1000000000);
   } catch (err) {
     logger.error(err)
   }
