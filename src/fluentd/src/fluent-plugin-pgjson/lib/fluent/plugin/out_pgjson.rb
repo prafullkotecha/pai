@@ -149,8 +149,7 @@ module Fluent::Plugin
         begin
           chunk.msgpack_each do |time, record|
             kind = record["objectSnapshot"]["kind"]
-            hexid = dump_unique_id_hex chunk.unique_id
-            log.debug "[pgjson] [cid #{hexid}] type #{kind}"
+            log.debug "[pgjson] [cid #{dump_unique_id_hex chunk.unique_id}] type #{kind}"
             if kind == "Framework"
               thread[:conn].exec("COPY framework_history (\"#{@insertedAt_col}\", \"#{@updatedAt_col}\", \"#{@uid_col}\", \"#{@frameworkName_col}\", \"#{@attemptIndex_col}\", \"#{@historyType_col}\", \"#{@snapshot_col}\") FROM STDIN WITH DELIMITER E'\\x01'")
               frameworkName = record["objectSnapshot"]["metadata"]["name"]
@@ -159,7 +158,7 @@ module Fluent::Plugin
               snapshot = record_value(record["objectSnapshot"])
               # use frameworkName + attemptIndex + historyType to generate a uid
               uid = Digest::MD5.hexdigest "#{frameworkName}+#{attemptIndex}+#{historyType}"
-              log.debug "[pgjson] [cid #{hexid}] framework #{frameworkName} attempt #{attemptIndex} uid #{uid}"
+              log.debug "[pgjson] [cid #{dump_unique_id_hex chunk.unique_id}] framework #{frameworkName} attempt #{attemptIndex} uid #{uid}"
               thread[:conn].put_copy_data "#{time}\x01#{time}\x01#{uid}\x01#{frameworkName}\x01#{attemptIndex}\x01#{historyType}\x01#{snapshot}\n"
             elsif kind == "Pod"
               thread[:conn].exec("COPY pods (\"#{@insertedAt_col}\", \"#{@updatedAt_col}\", \"#{@uid_col}\", \"#{@frameworkName_col}\", \"#{@attemptIndex_col}\", \"#{@taskroleName_col}\", \"#{@taskroleIndex_col}\", \"#{@taskAttemptIndex_col}\", \"#{@snapshot_col}\") FROM STDIN WITH DELIMITER E'\\x01'")
@@ -179,7 +178,7 @@ module Fluent::Plugin
           log.debug "%s while copy data: %s" % [ err.class.name, err.message ]
           retry
         rescue PG::Error => err
-          log.debug "[pgjson] [cid #{hexid}] Error: #{err.message}"
+          log.debug "[pgjson] [cid #{dump_unique_id_hex chunk.unique_id}] Error: #{err.message}"
           errmsg = "%s while copy data: %s" % [ err.class.name, err.message ]
           thread[:conn].put_copy_end( errmsg )
           thread[:conn].get_result
@@ -188,7 +187,7 @@ module Fluent::Plugin
           thread[:conn].put_copy_end
           res = thread[:conn].get_result
           raise res.result_error_message if res.result_status != PG::PGRES_COMMAND_OK
-          log.debug "[pgjson] [cid #{hexid}] OK."
+          log.debug "[pgjson] [cid #{dump_unique_id_hex chunk.unique_id}] OK."
         end
       else
         raise "Cannot connect to db host."
