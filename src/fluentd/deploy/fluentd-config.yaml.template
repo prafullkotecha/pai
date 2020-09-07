@@ -23,6 +23,7 @@ data:
   system.conf: |-
     <system>
       root_dir /tmp/fluentd-buffers/
+      log_level debug
     </system>
   containers.input.conf: |-
     # FC Docker Container Log:

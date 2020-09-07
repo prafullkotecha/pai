@@ -159,6 +159,7 @@ module Fluent::Plugin
               snapshot = record_value(record["objectSnapshot"])
               # use frameworkName + attemptIndex + historyType to generate a uid
               uid = Digest::MD5.hexdigest "#{frameworkName}+#{attemptIndex}+#{historyType}"
+              log.debug "writing framework #{frameworkName} attempt #{attemptIndex} uid #{uid} in chunk id #{dump_unique_id_hex chunk.unique_id}"
               thread[:conn].put_copy_data "#{time}\x01#{time}\x01#{uid}\x01#{frameworkName}\x01#{attemptIndex}\x01#{historyType}\x01#{snapshot}\n"
             elsif kind == "Pod"
               thread[:conn].exec("COPY pods (\"#{@insertedAt_col}\", \"#{@updatedAt_col}\", \"#{@uid_col}\", \"#{@frameworkName_col}\", \"#{@attemptIndex_col}\", \"#{@taskroleName_col}\", \"#{@taskroleIndex_col}\", \"#{@taskAttemptIndex_col}\", \"#{@snapshot_col}\") FROM STDIN WITH DELIMITER E'\\x01'")
@@ -180,6 +181,7 @@ module Fluent::Plugin
         rescue PG::Error => err
           log.debug "[pgjson] [write] Error while writing, error is #{err.class}"
           errmsg = "%s while copy data: %s" % [ err.class.name, err.message ]
+          log.debug "[pgjson] error in chunk id #{dump_unique_id_hex chunk.unique_id}"
           thread[:conn].put_copy_end( errmsg )
           thread[:conn].get_result
           raise errmsg
